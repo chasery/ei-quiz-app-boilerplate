@@ -50,7 +50,14 @@ const store = {
 // These functions return HTML templates
 function generateQuizStartView() {
 	// A function for generating the quiz start view
-	console.log('`generateQuizStartView` ran');
+	return `
+		<article>
+			<section class="center">
+				<p>Test your knowledge of Halloween with this 5 question quiz!<p>
+				<button class="button">Start Quiz!</button>
+			</section>
+		</article>
+	`;
 }
 function generateQuestionView() {
 	// A function for returning the current question view
@@ -65,8 +72,17 @@ function generateQuizCompleteView() {
 
 // This function conditionally replaces the contents of the <main> tag based on the state of the store
 function renderCurrentView() {
-	// A function for rendering the current view
-	console.log('`renderCurrentView` ran');
+	// Initialize a variable to store our current view
+	let currentView = "";
+	// Evaluate whether the quiz is started or not
+	if (store.quizStarted) {
+		// This will handle the true state and do some evaluation of what we need to render
+	} else {
+		// Set our current view to our Quiz Start template if quiz not started
+		currentView = generateQuizStartView();
+	}
+
+	$('.main').html(currentView);
 }
 
 /********** EVENT HANDLER FUNCTIONS **********/
