@@ -53,7 +53,7 @@ function generateQuizStartView() {
 	return `
 		<article>
 			<section class="center">
-				<p>Test your knowledge of Halloween with this 5 question quiz!<p>
+				<p>Test your knowledge of Halloween with this 5 question quiz!</p>
 				<button class="button">Start Quiz!</button>
 			</section>
 		</article>
