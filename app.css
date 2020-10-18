@@ -1,8 +1,90 @@
-/* Your styles should be mobile-first and responsive */
+/* Quiz layout CSS */
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.header {
+    flex: 1;
+    padding: 2rem 2rem 0;
+    text-align: center;
+}
+.main {
+    flex: 3;
+    padding: 0 2rem;
+}
+.footer {
+    display: flex;
+    padding: 0 2rem 2rem;
+}
+@media all and (min-width: 64rem) {
+    body {
+        align-items: center;
+    }
+    .header, .main, .footer {
+        width: 50rem;
+    }
+}
 
-/** 
-  * If you are unclear on how to utilize a mobile-first, responsive technique to write your CSS, here is an example: 
-  *
-  * https://github.com/andreacardybailey/responsive_example/blob/master/styles/responsive-base.css 
-  *
-*/
+/* Element zero out CSS */
+h1, h2, h3 {
+    margin: 0;
+}
+ul {
+    padding-left: 0;
+    list-style: none;
+}
+input[type=radio] {
+    opacity: 0;
+}
+
+.center {
+    display: flex;
+    flex-direction: column;
+}
+.button {
+    height: 3rem;
+    padding: 0 2rem;
+    align-self: center;
+    justify-self: center;
+    margin-top: 1rem;
+    background-color: transparent;
+    border: 0.0625rem solid #979797;
+}
+
+/* Quiz Form CSS */
+.question__number {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+}
+.question__text {
+    margin-bottom: 3rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+.answer {
+    display: flex;
+    align-items: center;
+    height: 4rem;
+    margin-bottom: 1rem;
+    padding: 0 1.5rem;
+    border: 0.0625rem solid #979797;
+}
+.answer--selected {
+    background-color: #D8D8D8;
+}
+
+/* Footer styling CSS */
+.footer__score {
+    flex: 2;
+    align-self: center;
+}
+.footer__control {
+    flex: 1;
+    height: 3rem;
+    background-color: transparent;
+    border: 0.0625rem solid #979797;
+}
