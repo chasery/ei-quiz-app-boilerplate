@@ -59,7 +59,9 @@ function generateStartView() {
 		</article>
 	`;
 }
+
 function generateAnswerElement(answer, index) {
+	// A function to create an answer element ofr our multiple select
 	return `
 		<li class="answer">
 			<label for="answer${index}">${answer}</label>
@@ -67,19 +69,25 @@ function generateAnswerElement(answer, index) {
 		</li>
 	`;
 }
-function generateQuestionView(q) {
+function generateQuestionView(current, currentNumber, totalQuestions, score) {
 	// This function grabs the current question and returns that information to display in the view template
-	const {question, answers} = q;
+	const {question, answers} = current;
+	
 	let answerList = answers.map((answer, index) => generateAnswerElement(answer, index)).join("");
 	return `
 		<article>
 			<section>
 				<form class="question">
+					<h3 class="question__number">Question ${currentNumber} / ${totalQuestions}</h3>
 					<h2 class="question__text">${question}</h2>
 					<ul>
 						${answerList}
 					</ul>
 				</form>
+				<footer class="footer">
+					<p class="footer__score">Correct Answers: <strong class="footer__count">${score} / ${totalQuestions}</strong></p>
+					<button class="footer__control">Next</button>
+				</footer>
 			</section>
 		</article>
 	`;
@@ -93,13 +101,20 @@ function generateCompleteView() {
 
 // This function conditionally replaces the contents of the <main> tag based on the state of the store
 function renderCurrentView() {
-	// Initialize a variable to store quiz started state and our current view
-	const started = store.quizStarted;
+	// Initialize a variable to pass in quiz state state
+	const state = {
+		started: store.quizStarted,
+		currentQuestion: store.questions[store.questionNumber],
+		currentQuestionNumber: store.questionNumber +1,
+		totalQuestions: store.questions.length,
+		score: store.score
+	};
+
 	let currentView = "";
-	// Evaluate whether the quiz is started or not
-	if (started) {
+	// Evaluate whether the quiz is started or not and that we aren't on the final question
+	if (state.started && state.currentQuestionNumber <= state.totalQuestions) {
 		// This will handle the true state and do some evaluation of what we need to render
-		currentView = generateQuestionView(store.questions[store.questionNumber]);
+		currentView = generateQuestionView(state.currentQuestion, state.currentQuestionNumber, state.totalQuestions, state.score);
 	} else {
 		// Set our current view to our Quiz Start template if quiz not started
 		currentView = generateStartView();
