@@ -7,17 +7,19 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 .header {
-    flex: 1;
     padding: 2rem 2rem 0;
     text-align: center;
 }
 .main {
-    flex: 3;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
     padding: 0 2rem;
 }
 .footer {
     display: flex;
-    padding: 0 2rem 2rem;
+    justify-self: flex-end;
+    padding-bottom: 2rem;
 }
 @media all and (min-width: 64rem) {
     body {
@@ -28,7 +30,7 @@ body {
     }
 }
 
-/* Element zero out CSS */
+/* Element zero out styling */
 h1, h2, h3 {
     margin: 0;
 }
@@ -40,10 +42,7 @@ input[type=radio] {
     opacity: 0;
 }
 
-.center {
-    display: flex;
-    flex-direction: column;
-}
+/* General Styling */
 .button {
     height: 3rem;
     padding: 0 2rem;
@@ -54,7 +53,33 @@ input[type=radio] {
     border: 0.0625rem solid #979797;
 }
 
-/* Quiz Form CSS */
+/* Start view styling */
+.start {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.start__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
+    text-align: center;
+}
+
+/* Quiz view styling */
+
+.question {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.question__card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
+}
 .question__number {
     margin-bottom: 1rem;
     font-size: 1rem;
@@ -76,8 +101,6 @@ input[type=radio] {
 .answer--selected {
     background-color: #D8D8D8;
 }
-
-/* Footer styling CSS */
 .footer__score {
     flex: 2;
     align-self: center;

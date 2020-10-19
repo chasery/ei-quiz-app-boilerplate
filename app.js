@@ -5,24 +5,54 @@ const store = {
 	// 5 or more questions are required
 	questions: [
 		{
-			question: 'What color is broccoli?',
+			question: 'Which country did Halloween originate in?',
 			answers: [
-			'red',
-			'orange',
-			'pink',
-			'green'
+			'Mexico',
+			'Ireland',
+			'Romania',
+			'Egypt'
 			],
-			correctAnswer: 'green'
+			correctAnswer: 'Ireland'
 		},
 		{
-			question: 'What is the current year?',
+			question: 'What is the color order of a piece of candy corn from base to point?',
 			answers: [
-			'1970',
-			'2015',
-			'2019',
-			'2005'
+			'Orange (base), Yellow (middle), White (point)',
+			'Green (base), Yellow (middle), White (point)',
+			'Yellow (base), White (middle), Orange (point)',
+			'White (base), Orange (middle), Yellow (point)'
 			],
-			correctAnswer: '2019'
+			correctAnswer: 'Yellow (base), White (middle), Orange (point)'
+		},
+		{
+			question: 'How many people were hung during the Salem Witch Trials?',
+			answers: [
+			'13',
+			'19',
+			'25',
+			'32'
+			],
+			correctAnswer: '19'
+		},
+		{
+			question: 'Who wrote the classic novel ‘Dracula?’',
+			answers: [
+			'Mary Shelly',
+			'Edgar Allen Poe',
+			'H.P. Lovecraft',
+			'Bram Stoker'
+			],
+			correctAnswer: 'Bram Stoker'
+		},
+		{
+			question: 'Which horror movie icon has the highest on-screen body count?',
+			answers: [
+			'Jason Vorhees - Friday the 13th series',
+			'Freddy Krueger - A Nightmare on Elm Street series',
+			'Michael Myers - Halloween series',
+			'Leatherface - The Texas Chainsaw Massacre series'
+			],
+			correctAnswer: 'Jason Vorhees - Friday the 13th series'
 		}
 	],
 	quizStarted: false,
@@ -48,15 +78,17 @@ const store = {
 /********** TEMPLATE GENERATION FUNCTIONS **********/
 
 // These functions return HTML templates
-function generateStartView() {
+function generateStartView(store) {
 	// A function for generating the quiz start view
+	const quizLength = store.questions.length;
+
 	return `
-		<article>
-			<section class="center">
-				<p>Test your knowledge of Halloween with this 5 question quiz!</p>
-				<button class="startQuiz button">Start Quiz!</button>
-			</section>
-		</article>
+		<div class="start">
+			<div class="start__content">
+				<p>Test your knowledge of Halloween with this ${quizLength} question quiz!</p>
+				<button class="startQuiz button">Begin</button>
+			</div>
+		</div>
 	`;
 }
 
@@ -69,27 +101,29 @@ function generateAnswerElement(answer, index) {
 		</li>
 	`;
 }
-function generateQuestionView(current, currentNumber, totalQuestions, score) {
+function generateQuestionView(store) {
 	// This function grabs the current question and returns that information to display in the view template
-	const {question, answers} = current;
-	
-	let answerList = answers.map((answer, index) => generateAnswerElement(answer, index)).join("");
+	// Variables for handling the various dynamic state content of our question view
+	const {questions, questionNumber, score} = store;
+	const currentQuestion = questions[questionNumber];
+	const currentQuestionNumber = questionNumber + 1;
+	const quizLength = questions.length;
+	// Build out our list of answers
+	let answerList = currentQuestion.answers.map((answer, index) => generateAnswerElement(answer, index)).join("");
 	return `
-		<article>
-			<section>
-				<form class="question">
-					<h3 class="question__number">Question ${currentNumber} / ${totalQuestions}</h3>
-					<h2 class="question__text">${question}</h2>
-					<ul>
-						${answerList}
-					</ul>
-				</form>
-				<footer class="footer">
-					<p class="footer__score">Correct Answers: <strong class="footer__count">${score} / ${totalQuestions}</strong></p>
-					<button class="footer__control">Next</button>
-				</footer>
-			</section>
-		</article>
+		<form class="question">
+			<div class="question__card">
+				<h3 class="question__number">Question ${currentQuestionNumber} / ${quizLength}</h3>
+				<h2 class="question__text">${currentQuestion.question}</h2>
+				<ul>
+					${answerList}
+				</ul>
+			</div>
+			<footer class="footer">
+				<p class="footer__score">Correct Answers: <strong class="footer__count">${score} / ${quizLength}</strong></p>
+				<button class="footer__control" disabled>Submit</button>
+			</footer>
+		</form>
 	`;
 }
 function generateCompleteView() {
@@ -101,23 +135,15 @@ function generateCompleteView() {
 
 // This function conditionally replaces the contents of the <main> tag based on the state of the store
 function renderCurrentView() {
-	// Initialize a variable to pass in quiz state state
-	const state = {
-		started: store.quizStarted,
-		currentQuestion: store.questions[store.questionNumber],
-		currentQuestionNumber: store.questionNumber +1,
-		totalQuestions: store.questions.length,
-		score: store.score
-	};
-
+	// Initialize a state variable to pass in
 	let currentView = "";
 	// Evaluate whether the quiz is started or not and that we aren't on the final question
-	if (state.started && state.currentQuestionNumber <= state.totalQuestions) {
+	if (store.quizStarted && store.questionNumber < store.questions.length) {
 		// This will handle the true state and do some evaluation of what we need to render
-		currentView = generateQuestionView(state.currentQuestion, state.currentQuestionNumber, state.totalQuestions, state.score);
+		currentView = generateQuestionView(store);
 	} else {
 		// Set our current view to our Quiz Start template if quiz not started
-		currentView = generateStartView();
+		currentView = generateStartView(store);
 	};
 	$('.main').html(currentView);
 }
