@@ -59,37 +59,49 @@ function generateStartView() {
 		</article>
 	`;
 }
-function generateQuestionView() {
-	// A function for returning the current question view
+function generateAnswerElement(answer, index) {
+	return `
+		<li class="answer">
+			<label for="answer${index}">${answer}</label>
+			<input type="radio" id="answer${index}" tabindex="${index}" name="answers" value="${answer}">
+		</li>
+	`;
+}
+function generateQuestionView(q) {
+	// This function grabs the current question and returns that information to display in the view template
+	const {question, answers} = q;
+	let answerList = answers.map((answer, index) => generateAnswerElement(answer, index)).join("");
 	return `
 		<article>
 			<section>
 				<form class="question">
-					<h2>Question 1</h2>
+					<h2 class="question__text">${question}</h2>
+					<ul>
+						${answerList}
+					</ul>
 				</form>
 			</section>
 		</article>
 	`;
 }
-function generateQuizCompleteView() {
+function generateCompleteView() {
 	// A function for generating the quiz completion view
-	console.log('`generateQuizCompleteView` ran');
+	console.log('`generateCompleteView` ran');
 }
 
 /********** RENDER FUNCTION(S) **********/
 
 // This function conditionally replaces the contents of the <main> tag based on the state of the store
 function renderCurrentView() {
-	// Initialize a variable to store our current view
+	// Initialize a variable to store quiz started state and our current view
+	const started = store.quizStarted;
 	let currentView = "";
-	let started = store.quizStarted;
 	// Evaluate whether the quiz is started or not
 	if (started) {
 		// This will handle the true state and do some evaluation of what we need to render
-		currentView = generateQuestionView();
+		currentView = generateQuestionView(store.questions[store.questionNumber]);
 	} else {
 		// Set our current view to our Quiz Start template if quiz not started
-		console.log('made it');
 		currentView = generateStartView();
 	};
 	$('.main').html(currentView);
@@ -98,14 +110,15 @@ function renderCurrentView() {
 /********** EVENT HANDLER FUNCTIONS **********/
 
 // These functions handle events (submit, click, etc)
-function setQuestionNumberState() {
-	// A function for setting the the question number in our store object
+function toggleQuizStartedState() {
+	// A function for toggling the started state of the quiz app in our store object
+	store.quizStarted = !store.quizStarted;
 }
 function handleStartQuizClick() {
 	// Handle the click event of our start quiz button
 	$('.startQuiz').on('click', function(){
 		// Set the state of our quizStarted to true
-		store.quizStarted = !store.quizStarted;
+		toggleQuizStartedState();
 		// Render our first question
 		renderCurrentView();
 	});
