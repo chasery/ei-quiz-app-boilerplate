@@ -48,20 +48,28 @@ const store = {
 /********** TEMPLATE GENERATION FUNCTIONS **********/
 
 // These functions return HTML templates
-function generateQuizStartView() {
+function generateStartView() {
 	// A function for generating the quiz start view
 	return `
 		<article>
 			<section class="center">
 				<p>Test your knowledge of Halloween with this 5 question quiz!</p>
-				<button class="button">Start Quiz!</button>
+				<button class="startQuiz button">Start Quiz!</button>
 			</section>
 		</article>
 	`;
 }
 function generateQuestionView() {
 	// A function for returning the current question view
-	console.log('`generateQuestionView` ran');
+	return `
+		<article>
+			<section>
+				<form class="question">
+					<h2>Question 1</h2>
+				</form>
+			</section>
+		</article>
+	`;
 }
 function generateQuizCompleteView() {
 	// A function for generating the quiz completion view
@@ -74,23 +82,33 @@ function generateQuizCompleteView() {
 function renderCurrentView() {
 	// Initialize a variable to store our current view
 	let currentView = "";
+	let started = store.quizStarted;
 	// Evaluate whether the quiz is started or not
-	if (store.quizStarted) {
+	if (started) {
 		// This will handle the true state and do some evaluation of what we need to render
+		currentView = generateQuestionView();
 	} else {
 		// Set our current view to our Quiz Start template if quiz not started
-		currentView = generateQuizStartView();
-	}
-
+		console.log('made it');
+		currentView = generateStartView();
+	};
 	$('.main').html(currentView);
 }
 
 /********** EVENT HANDLER FUNCTIONS **********/
 
 // These functions handle events (submit, click, etc)
+function setQuestionNumberState() {
+	// A function for setting the the question number in our store object
+}
 function handleStartQuizClick() {
-	// A function to handle the starting of the quiz
-	console.log('`handleStartQuizClick` ran');
+	// Handle the click event of our start quiz button
+	$('.startQuiz').on('click', function(){
+		// Set the state of our quizStarted to true
+		store.quizStarted = !store.quizStarted;
+		// Render our first question
+		renderCurrentView();
+	});
 }
 function handleAnswerSubmit() {
 	// A function to handle the submission of an answer
@@ -108,9 +126,6 @@ function handleInitialLoad() {
 	// A function to initalize our app
 	
 	// Testing stubbed out functions
-	generateQuizStartView();
-	generateQuestionView();
-	generateQuizCompleteView();
 	renderCurrentView();
 	handleStartQuizClick();
 	handleAnswerSubmit();
