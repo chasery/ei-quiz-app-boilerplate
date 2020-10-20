@@ -89,8 +89,8 @@ function generateStartView(store) {
 	const quizLength = store.questions.length;
 
 	return `
-		<div class="start">
-			<div class="start__content">
+		<div class="centered">
+			<div class="centered__content">
 				<p>Test your knowledge of Halloween with this ${quizLength} question quiz!</p>
 				<button class="startQuiz button">Begin</button>
 			</div>
@@ -169,12 +169,15 @@ function generateQuestionView(store) {
 }
 function generateCompleteView() {
 	// A function for generating the quiz completion view
+	const {questions, score} = store;
+	const quizLength = questions.length;
+
 	return `
-		<div class="start">
-			<div class="start__content">
+		<div class="centered">
+			<div class="centered__content">
 				<h2>Congratulations!</h2>
-				<p>You got 3 answers out of 5 correct.</p>
-				<button class="startQuiz button">Retry</button>
+				<p>You got ${score} answers out of ${quizLength} correct.</p>
+				<button class="restartQuiz button">Retry</button>
 			</div>
 		</div>
 	`;
@@ -191,7 +194,6 @@ function renderCurrentView() {
 		// This will handle the true state and do some evaluation of what we need to render
 		currentView = generateQuestionView(store);
 	} else if (store.quizStarted && store.questionNumber === store.questions.length) {
-		console.log('made it');
 		currentView = generateCompleteView(store);
 	} else {
 		// Set our current view to our Quiz Start template if quiz not started

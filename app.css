@@ -50,13 +50,13 @@ ul {
     border: 0.0625rem solid #979797;
 }
 
-/* Start view styling */
-.start {
+/* Centered content styling */
+.centered {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
 }
-.start__content {
+.centered__content {
     display: flex;
     flex-direction: column;
     justify-content: center;
