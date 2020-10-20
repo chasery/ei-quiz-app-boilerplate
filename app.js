@@ -107,7 +107,7 @@ function generateFooterElement(score, quizLength, answerSubmitted) {
 	let button = "";
 	// Checking if our answer has been submitted for the question and returning a control based on that outcome
 	if (answerSubmitted) {
-		button = `<button class="next footer__control">Next</button>`;
+		button = `<button class="next footer__control" type="button">Next</button>`;
 	} else {
 		button = `<button class="submit footer__control" type="submit">Submit</button>`;
 	}
@@ -179,12 +179,32 @@ function handleStartQuizClick() {
 		renderCurrentView();
 	});
 }
+function toggleAnswerSubmittedState() {
+	// A function for toggling the started state of the quiz app in our store object
+	store.answerSubmitted = !store.answerSubmitted;
+}
+function addToScore() {
+	// A function for adding to our quiz score
+	store.score ++;
+}
+function validateAnswer(answer) {
+	// A function to validate the provided answer
+	if (answer === store.questions[store.questionNumber].correctAnswer) {
+		return true;
+	} else {
+		return false;
+	}
+}
 function handleAnswerSubmit() {
 	// A function to handle the submission of an answer
 	$('.main').on('submit', '.question', function(event) {
 		event.preventDefault();
-		const selectedAnswer = $('input[name="answers"]:checked').val();
-		console.log(selectedAnswer);
+		let validAnswer = validateAnswer($('input[name="answers"]:checked').val());
+		if (validAnswer) {
+			addToScore();
+		}
+		toggleAnswerSubmittedState();
+		renderCurrentView();
 	});
 }
 function handleNextQuestionClick() {
