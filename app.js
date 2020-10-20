@@ -109,7 +109,7 @@ function generateFooterElement(score, quizLength, answerSubmitted) {
 	if (answerSubmitted) {
 		button = `<button class="next footer__control">Next</button>`;
 	} else {
-		button = `<button class="submit footer__control">Submit</button>`;
+		button = `<button class="submit footer__control" type="submit">Submit</button>`;
 	}
 	return `
 		<footer class="footer">
@@ -172,7 +172,7 @@ function toggleQuizStartedState() {
 }
 function handleStartQuizClick() {
 	// Handle the click event of our start quiz button
-	$('.startQuiz').on('click touch', function() {
+	$('.main').on('click touch', '.startQuiz', function() {
 		// Set the state of our quizStarted to true
 		toggleQuizStartedState();
 		// Render our first question
@@ -181,9 +181,10 @@ function handleStartQuizClick() {
 }
 function handleAnswerSubmit() {
 	// A function to handle the submission of an answer
-	console.log('`handleAnswerSubmit` ran');
-	$('.footer__control').on('click', function() {
-		console.log($('input[name=radioName]:checked', '.question').val());
+	$('.main').on('submit', '.question', function(event) {
+		event.preventDefault();
+		const selectedAnswer = $('input[name="answers"]:checked').val();
+		console.log(selectedAnswer);
 	});
 }
 function handleNextQuestionClick() {
