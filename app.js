@@ -223,15 +223,6 @@ function setSelectedAnswer(val) {
 	// A function for toggling the selected state of an answer
 	store.questions[store.questionNumber].selectedAnswer = val;
 }
-function handleAnswerSelect() {
-	// A function handle the selection of our answers
-	$('.main').on('click', '.answer input[type="radio"]', function(event) {
-		// Set the state of our quizStarted to true
-		const target = $(event.target);
-		const selectedAnswer = target.val();
-		setSelectedAnswer(selectedAnswer);
-	});
-}
 
 function toggleAnswerSubmittedState() {
 	// A function for toggling the started state of the quiz app in our store object
@@ -253,12 +244,14 @@ function handleAnswerSubmit() {
 	// A function to handle the submission of an answer
 	$('.main').on('submit', '.question', function(event) {
 		event.preventDefault();
-		let validAnswer = validateAnswer($('input[name="answers"]:checked').val());
+		let answer = $('input[name="answers"]:checked').val()
+		let validAnswer = validateAnswer(answer);
 		if (validAnswer) {
 			addToScore();
 		} else {
 
 		}
+		setSelectedAnswer(answer);
 		toggleAnswerSubmittedState();
 		renderCurrentView();
 	});
@@ -300,11 +293,8 @@ function handleRetryQuizClick() {
 }
 function handleInitialLoad() {
 	// A function to initalize our app
-	
-	// Testing stubbed out functions
 	renderCurrentView();
 	handleStartQuizClick();
-	handleAnswerSelect();
 	handleAnswerSubmit();
 	handleNextQuestionClick();
 	handleRetryQuizClick();
