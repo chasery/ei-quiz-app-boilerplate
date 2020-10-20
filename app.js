@@ -56,6 +56,7 @@ const store = {
 		}
 	],
 	quizStarted: false,
+	answerSubmitted: false,
 	questionNumber: 0,
 	score: 0
 };
@@ -93,23 +94,40 @@ function generateStartView(store) {
 }
 
 function generateAnswerElement(answer, index) {
-	// A function to create an answer element ofr our multiple select
+	// A function to create an answer element of our multiple select
 	return `
 		<li class="answer">
+			<input type="radio" id="answer${index}" tabindex="${index}" name="answers" value="${answer}" required>
 			<label for="answer${index}">${answer}</label>
-			<input type="radio" id="answer${index}" tabindex="${index}" name="answers" value="${answer}">
 		</li>
+	`;
+}
+function generateFooterElement(score, quizLength, answerSubmitted) {
+	// A function to create the question footer element of our multiple select
+	let button = "";
+	// Checking if our answer has been submitted for the question and returning a control based on that outcome
+	if (answerSubmitted) {
+		button = `<button class="next footer__control">Next</button>`;
+	} else {
+		button = `<button class="submit footer__control" type="submit">Submit</button>`;
+	}
+	return `
+		<footer class="footer">
+			<p class="footer__score">Correct Answers: <strong class="footer__count">${score} / ${quizLength}</strong></p>
+			${button}
+		</footer>
 	`;
 }
 function generateQuestionView(store) {
 	// This function grabs the current question and returns that information to display in the view template
 	// Variables for handling the various dynamic state content of our question view
-	const {questions, questionNumber, score} = store;
+	const {questions, questionNumber, score, answerSubmitted} = store;
 	const currentQuestion = questions[questionNumber];
 	const currentQuestionNumber = questionNumber + 1;
 	const quizLength = questions.length;
-	// Build out our list of answers
+	// Build out our various dynamic components
 	let answerList = currentQuestion.answers.map((answer, index) => generateAnswerElement(answer, index)).join("");
+	let footer = generateFooterElement(score, quizLength, answerSubmitted)
 	return `
 		<form class="question">
 			<div class="question__card">
@@ -119,10 +137,7 @@ function generateQuestionView(store) {
 					${answerList}
 				</ul>
 			</div>
-			<footer class="footer">
-				<p class="footer__score">Correct Answers: <strong class="footer__count">${score} / ${quizLength}</strong></p>
-				<button class="footer__control" disabled>Submit</button>
-			</footer>
+			${footer}
 		</form>
 	`;
 }
@@ -157,7 +172,7 @@ function toggleQuizStartedState() {
 }
 function handleStartQuizClick() {
 	// Handle the click event of our start quiz button
-	$('.startQuiz').on('click', function(){
+	$('.main').on('click touch', '.startQuiz', function() {
 		// Set the state of our quizStarted to true
 		toggleQuizStartedState();
 		// Render our first question
@@ -166,7 +181,11 @@ function handleStartQuizClick() {
 }
 function handleAnswerSubmit() {
 	// A function to handle the submission of an answer
-	console.log('`handleAnswerSubmit` ran');
+	$('.main').on('submit', '.question', function(event) {
+		event.preventDefault();
+		const selectedAnswer = $('input[name="answers"]:checked').val();
+		console.log(selectedAnswer);
+	});
 }
 function handleNextQuestionClick() {
 	// A function to handle the next question click
