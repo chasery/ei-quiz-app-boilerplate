@@ -101,7 +101,7 @@ function generateStartView(store) {
 function generateValidationString(submittedAnswer, correctAnswer){
 	// A function to generate our correct/incorrect message to display inline
 	if (submittedAnswer === correctAnswer) {
-		return `<div>Correct! You did it!</div>`;
+		return `<div>You answered correctly!</div>`;
 	} else {
 		return `<div>Incorrect! The correct answer is <strong>${correctAnswer}</strong>.`;
 	}
@@ -117,7 +117,7 @@ function generateAnswerElement(answer, selected, index) {
 
 	return `
 		<li class="answer ${submitted && answer === selected && selected === correctAnswer ? 'correct':''} ${submitted && answer === selected && answer !== correctAnswer ? 'incorrect':''}">
-			<input type="radio" id="answer${index}" tabindex="${index}" name="answers" value="${answer}" required ${answer === selected ? 'checked':''} ${submitted ? 'disabled':''}>
+			<input type="radio" id="answer${index}" tabindex="${index + 1}" name="answers" value="${answer}" required ${answer === selected ? 'checked':''} ${submitted ? 'disabled':''}>
 			<label for="answer${index}">
 				<div>${answer}</div>
 				${validation}
@@ -130,9 +130,9 @@ function generateFooterElement(score, quizLength, answerSubmitted) {
 	let button = "";
 	// Checking if our answer has been submitted for the question and returning a control based on that outcome
 	if (answerSubmitted) {
-		button = `<button class="next footer__control" type="button">Next</button>`;
+		button = `<button class="next footer__control button" type="button">Next</button>`;
 	} else {
-		button = `<button class="submit footer__control" type="submit">Submit</button>`;
+		button = `<button class="submit footer__control button" type="submit">Submit</button>`;
 	}
 
 	return `
@@ -211,7 +211,7 @@ function toggleQuizStartedState() {
 }
 function handleStartQuizClick() {
 	// Handle the click event of our start quiz button
-	$('.main').on('click touch', '.startQuiz', function() {
+	$('.main').on('click', '.startQuiz', function() {
 		// Set the state of our quizStarted to true
 		toggleQuizStartedState();
 		// Render our first question
@@ -225,13 +225,11 @@ function setSelectedAnswer(val) {
 }
 function handleAnswerSelect() {
 	// A function handle the selection of our answers
-	$('.main').on('click touch', '.answer input[type="radio"]', function(event) {
+	$('.main').on('click', '.answer input[type="radio"]', function(event) {
 		// Set the state of our quizStarted to true
 		const target = $(event.target);
 		const selectedAnswer = target.val();
 		setSelectedAnswer(selectedAnswer);
-		// Render our first question
-		renderCurrentView();
 	});
 }
 
