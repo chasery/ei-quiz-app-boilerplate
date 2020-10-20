@@ -266,21 +266,39 @@ function handleAnswerSubmit() {
 	});
 }
 
+function clearSelectedAnswer() {
+	// A function to clear our selected answer after moving on
+	store.questions[store.questionNumber].selectedAnswer = '';
+}
 function updateQuestionNumber() {
 	// A function for updating our question number
-	store.questionNumber ++;
+	if (store.questionNumber < store.questions.length) {
+		store.questionNumber ++;
+	} else {
+		store.questionNumber = 0;
+	}
 }
 function handleNextQuestionClick() {
 	// A function to handle the next question click
 	$('.main').on('click', '.next', function() {
+		clearSelectedAnswer();
 		updateQuestionNumber();
 		toggleAnswerSubmittedState();
 		renderCurrentView();
 	});
 }
+function resetScore() {
+	// A function for resetting the score
+	store.score = 0;
+}
 function handleRetryQuizClick() {
 	// A function to handle the retry quiz click
-	console.log('`handleRetryQuizClick` ran');
+	$('.main').on('click', '.restartQuiz', function() {
+		updateQuestionNumber();
+		toggleQuizStartedState();
+		resetScore();
+		renderCurrentView();
+	});
 }
 function handleInitialLoad() {
 	// A function to initalize our app
