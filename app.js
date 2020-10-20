@@ -253,9 +253,17 @@ function handleAnswerSubmit() {
 	});
 }
 
+function updateQuestionNumber() {
+	// A function for adding to our quiz score
+	store.questionNumber ++;
+}
 function handleNextQuestionClick() {
 	// A function to handle the next question click
-	console.log('`handleNextQuestionClick` ran');
+	$('.main').on('click', '.next', function() {
+		updateQuestionNumber();
+		toggleAnswerSubmittedState();
+		renderCurrentView();
+	});
 }
 function handleRetryQuizClick() {
 	// A function to handle the retry quiz click
