@@ -88,23 +88,44 @@ ul {
     font-weight: 700;
 }
 .answer {
+    position: relative;
     margin-bottom: 1rem;
 }
 .answer label {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    justify-content: center;
     height: 4rem;
     padding: 0 1.5rem;
     border: 0.0625rem solid #979797;
 }
+.answer label div + div {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+}
 .answer input[type="radio"] {
     position: absolute;
     top: 40%;
-    right: 2rem;
+    right: 1.5rem;
     opacity: 0;
 }
 .answer input[type="radio"]:checked + label {
     background-color: #D8D8D8;
+}
+.answer input[disabled] + label {
+    opacity: 0.5;
+}
+.correct label, .correct input[type="radio"]:checked + label {
+    background-color: #9effa6;
+    border: 0.0625rem solid #00920c;
+    color: #00920c;
+    opacity: 1;
+}
+.incorrect label, .incorrect input[type="radio"]:checked + label {
+    background-color: #ff9e9e;
+    border: 0.0625rem solid #920000;
+    color: #920000;
+    opacity: 1;
 }
 .footer__score {
     flex: 2;
