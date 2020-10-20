@@ -169,7 +169,15 @@ function generateQuestionView(store) {
 }
 function generateCompleteView() {
 	// A function for generating the quiz completion view
-	console.log('`generateCompleteView` ran');
+	return `
+		<div class="start">
+			<div class="start__content">
+				<h2>Congratulations!</h2>
+				<p>You got 3 answers out of 5 correct.</p>
+				<button class="startQuiz button">Retry</button>
+			</div>
+		</div>
+	`;
 }
 
 /********** RENDER FUNCTION(S) **********/
@@ -182,6 +190,9 @@ function renderCurrentView() {
 	if (store.quizStarted && store.questionNumber < store.questions.length) {
 		// This will handle the true state and do some evaluation of what we need to render
 		currentView = generateQuestionView(store);
+	} else if (store.quizStarted && store.questionNumber === store.questions.length) {
+		console.log('made it');
+		currentView = generateCompleteView(store);
 	} else {
 		// Set our current view to our Quiz Start template if quiz not started
 		currentView = generateStartView(store);
@@ -254,7 +265,7 @@ function handleAnswerSubmit() {
 }
 
 function updateQuestionNumber() {
-	// A function for adding to our quiz score
+	// A function for updating our question number
 	store.questionNumber ++;
 }
 function handleNextQuestionClick() {
