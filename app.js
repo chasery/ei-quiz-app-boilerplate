@@ -89,8 +89,8 @@ function generateStartView(store) {
 	const quizLength = store.questions.length;
 
 	return `
-		<div class="start">
-			<div class="start__content">
+		<div class="centered">
+			<div class="centered__content">
 				<p>Test your knowledge of Halloween with this ${quizLength} question quiz!</p>
 				<button class="startQuiz button">Begin</button>
 			</div>
@@ -101,7 +101,7 @@ function generateStartView(store) {
 function generateValidationString(submittedAnswer, correctAnswer){
 	// A function to generate our correct/incorrect message to display inline
 	if (submittedAnswer === correctAnswer) {
-		return `<div>Correct! You did it!</div>`;
+		return `<div>You answered correctly!</div>`;
 	} else {
 		return `<div>Incorrect! The correct answer is <strong>${correctAnswer}</strong>.`;
 	}
@@ -117,7 +117,7 @@ function generateAnswerElement(answer, selected, index) {
 
 	return `
 		<li class="answer ${submitted && answer === selected && selected === correctAnswer ? 'correct':''} ${submitted && answer === selected && answer !== correctAnswer ? 'incorrect':''}">
-			<input type="radio" id="answer${index}" tabindex="${index}" name="answers" value="${answer}" required ${answer === selected ? 'checked':''} ${submitted ? 'disabled':''}>
+			<input type="radio" id="answer${index}" tabindex="${index + 1}" name="answers" value="${answer}" required ${answer === selected ? 'checked':''} ${submitted ? 'disabled':''}>
 			<label for="answer${index}">
 				<div>${answer}</div>
 				${validation}
@@ -130,9 +130,9 @@ function generateFooterElement(score, quizLength, answerSubmitted) {
 	let button = "";
 	// Checking if our answer has been submitted for the question and returning a control based on that outcome
 	if (answerSubmitted) {
-		button = `<button class="next footer__control" type="button">Next</button>`;
+		button = `<button class="next footer__control button" type="button">Next</button>`;
 	} else {
-		button = `<button class="submit footer__control" type="submit">Submit</button>`;
+		button = `<button class="submit footer__control button" type="submit">Submit</button>`;
 	}
 
 	return `
@@ -169,7 +169,18 @@ function generateQuestionView(store) {
 }
 function generateCompleteView() {
 	// A function for generating the quiz completion view
-	console.log('`generateCompleteView` ran');
+	const {questions, score} = store;
+	const quizLength = questions.length;
+
+	return `
+		<div class="centered">
+			<div class="centered__content">
+				<h2>Congratulations!</h2>
+				<p>You got ${score} answers out of ${quizLength} correct.</p>
+				<button class="restartQuiz button">Retry</button>
+			</div>
+		</div>
+	`;
 }
 
 /********** RENDER FUNCTION(S) **********/
@@ -182,6 +193,8 @@ function renderCurrentView() {
 	if (store.quizStarted && store.questionNumber < store.questions.length) {
 		// This will handle the true state and do some evaluation of what we need to render
 		currentView = generateQuestionView(store);
+	} else if (store.quizStarted && store.questionNumber === store.questions.length) {
+		currentView = generateCompleteView(store);
 	} else {
 		// Set our current view to our Quiz Start template if quiz not started
 		currentView = generateStartView(store);
@@ -198,7 +211,7 @@ function toggleQuizStartedState() {
 }
 function handleStartQuizClick() {
 	// Handle the click event of our start quiz button
-	$('.main').on('click touch', '.startQuiz', function() {
+	$('.main').on('click', '.startQuiz', function() {
 		// Set the state of our quizStarted to true
 		toggleQuizStartedState();
 		// Render our first question
@@ -209,17 +222,6 @@ function handleStartQuizClick() {
 function setSelectedAnswer(val) {
 	// A function for toggling the selected state of an answer
 	store.questions[store.questionNumber].selectedAnswer = val;
-}
-function handleAnswerSelect() {
-	// A function handle the selection of our answers
-	$('.main').on('click touch', '.answer input[type="radio"]', function(event) {
-		// Set the state of our quizStarted to true
-		const target = $(event.target);
-		const selectedAnswer = target.val();
-		setSelectedAnswer(selectedAnswer);
-		// Render our first question
-		renderCurrentView();
-	});
 }
 
 function toggleAnswerSubmittedState() {
@@ -242,32 +244,57 @@ function handleAnswerSubmit() {
 	// A function to handle the submission of an answer
 	$('.main').on('submit', '.question', function(event) {
 		event.preventDefault();
-		let validAnswer = validateAnswer($('input[name="answers"]:checked').val());
+		let answer = $('input[name="answers"]:checked').val()
+		let validAnswer = validateAnswer(answer);
 		if (validAnswer) {
 			addToScore();
 		} else {
 
 		}
+		setSelectedAnswer(answer);
 		toggleAnswerSubmittedState();
 		renderCurrentView();
 	});
 }
 
+function clearSelectedAnswer() {
+	// A function to clear our selected answer after moving on
+	store.questions[store.questionNumber].selectedAnswer = '';
+}
+function updateQuestionNumber() {
+	// A function for updating our question number
+	if (store.questionNumber < store.questions.length) {
+		store.questionNumber ++;
+	} else {
+		store.questionNumber = 0;
+	}
+}
 function handleNextQuestionClick() {
 	// A function to handle the next question click
-	console.log('`handleNextQuestionClick` ran');
+	$('.main').on('click', '.next', function() {
+		clearSelectedAnswer();
+		updateQuestionNumber();
+		toggleAnswerSubmittedState();
+		renderCurrentView();
+	});
+}
+function resetScore() {
+	// A function for resetting the score
+	store.score = 0;
 }
 function handleRetryQuizClick() {
 	// A function to handle the retry quiz click
-	console.log('`handleRetryQuizClick` ran');
+	$('.main').on('click', '.restartQuiz', function() {
+		updateQuestionNumber();
+		toggleQuizStartedState();
+		resetScore();
+		renderCurrentView();
+	});
 }
 function handleInitialLoad() {
 	// A function to initalize our app
-	
-	// Testing stubbed out functions
 	renderCurrentView();
 	handleStartQuizClick();
-	handleAnswerSelect();
 	handleAnswerSubmit();
 	handleNextQuestionClick();
 	handleRetryQuizClick();
