@@ -7,42 +7,46 @@ const store = {
 		{
 			question: 'Which country did Halloween originate in?',
 			answers: [
-			'Mexico',
-			'Ireland',
-			'Romania',
-			'Egypt'
+				'Mexico',
+				'Ireland',
+				'Romania',
+				'Egypt'
 			],
-			correctAnswer: 'Ireland'
+			correctAnswer: 'Ireland',
+			selectedAnswer: ''
 		},
 		{
 			question: 'What is the color order of a piece of candy corn from base to point?',
 			answers: [
-			'Orange (base), Yellow (middle), White (point)',
-			'Green (base), Yellow (middle), White (point)',
-			'Yellow (base), White (middle), Orange (point)',
-			'White (base), Orange (middle), Yellow (point)'
+				'Orange (base), Yellow (middle), White (point)',
+				'Green (base), Yellow (middle), White (point)',
+				'Yellow (base), White (middle), Orange (point)',
+				'White (base), Orange (middle), Yellow (point)'
 			],
-			correctAnswer: 'Yellow (base), White (middle), Orange (point)'
+			correctAnswer: 'Yellow (base), White (middle), Orange (point)',
+			selectedAnswer: ''
 		},
 		{
 			question: 'How many people were hung during the Salem Witch Trials?',
 			answers: [
-			'13',
-			'19',
-			'25',
-			'32'
+				'13',
+				'19',
+				'25',
+				'32'
 			],
-			correctAnswer: '19'
+			correctAnswer: '19',
+			selectedAnswer: ''
 		},
 		{
 			question: 'Who wrote the classic novel ‘Dracula?’',
 			answers: [
-			'Mary Shelly',
-			'Edgar Allen Poe',
-			'H.P. Lovecraft',
-			'Bram Stoker'
+				'Mary Shelly',
+				'Edgar Allen Poe',
+				'H.P. Lovecraft',
+				'Bram Stoker'
 			],
-			correctAnswer: 'Bram Stoker'
+			correctAnswer: 'Bram Stoker',
+			selectedAnswer: ''
 		},
 		{
 			question: 'Which horror movie icon has the highest on-screen body count?',
@@ -52,7 +56,8 @@ const store = {
 			'Michael Myers - Halloween series',
 			'Leatherface - The Texas Chainsaw Massacre series'
 			],
-			correctAnswer: 'Jason Vorhees - Friday the 13th series'
+			correctAnswer: 'Jason Vorhees - Friday the 13th series',
+			selectedAnswer: ''
 		}
 	],
 	quizStarted: false,
@@ -93,12 +98,30 @@ function generateStartView(store) {
 	`;
 }
 
-function generateAnswerElement(answer, index) {
+function generateValidationString(submittedAnswer, correctAnswer){
+	// A function to generate our correct/incorrect message to display inline
+	if (submittedAnswer === correctAnswer) {
+		return `<div>Correct! You did it!</div>`;
+	} else {
+		return `<div>Incorrect! The correct answer is <strong>${correctAnswer}</strong>.`;
+	}
+}
+function generateAnswerElement(answer, selected, index) {
 	// A function to create an answer element of our multiple select
+	const submitted = store.answerSubmitted;
+	const correctAnswer = store.questions[store.questionNumber].correctAnswer;
+	let validation = '';
+	if (submitted && answer === selected) {
+		validation = generateValidationString(selected, correctAnswer);
+	}
+
 	return `
-		<li class="answer">
-			<input type="radio" id="answer${index}" tabindex="${index}" name="answers" value="${answer}" required>
-			<label for="answer${index}">${answer}</label>
+		<li class="answer ${submitted && answer === selected && selected === correctAnswer ? 'correct':''} ${submitted && answer === selected && answer !== correctAnswer ? 'incorrect':''}">
+			<input type="radio" id="answer${index}" tabindex="${index}" name="answers" value="${answer}" required ${answer === selected ? 'checked':''} ${submitted ? 'disabled':''}>
+			<label for="answer${index}">
+				<div>${answer}</div>
+				${validation}
+			</label>
 		</li>
 	`;
 }
@@ -111,6 +134,7 @@ function generateFooterElement(score, quizLength, answerSubmitted) {
 	} else {
 		button = `<button class="submit footer__control" type="submit">Submit</button>`;
 	}
+
 	return `
 		<footer class="footer">
 			<p class="footer__score">Correct Answers: <strong class="footer__count">${score} / ${quizLength}</strong></p>
@@ -125,9 +149,11 @@ function generateQuestionView(store) {
 	const currentQuestion = questions[questionNumber];
 	const currentQuestionNumber = questionNumber + 1;
 	const quizLength = questions.length;
+	const selectedAnswer = questions[questionNumber].selectedAnswer;
 	// Build out our various dynamic components
-	let answerList = currentQuestion.answers.map((answer, index) => generateAnswerElement(answer, index)).join("");
-	let footer = generateFooterElement(score, quizLength, answerSubmitted)
+	let answerList = currentQuestion.answers.map((answer, index) => generateAnswerElement(answer, selectedAnswer, index)).join("");
+	let footer = generateFooterElement(score, quizLength, answerSubmitted);
+
 	return `
 		<form class="question">
 			<div class="question__card">
@@ -179,6 +205,23 @@ function handleStartQuizClick() {
 		renderCurrentView();
 	});
 }
+
+function setSelectedAnswer(val) {
+	// A function for toggling the selected state of an answer
+	store.questions[store.questionNumber].selectedAnswer = val;
+}
+function handleAnswerSelect() {
+	// A function handle the selection of our answers
+	$('.main').on('click touch', '.answer input[type="radio"]', function(event) {
+		// Set the state of our quizStarted to true
+		const target = $(event.target);
+		const selectedAnswer = target.val();
+		setSelectedAnswer(selectedAnswer);
+		// Render our first question
+		renderCurrentView();
+	});
+}
+
 function toggleAnswerSubmittedState() {
 	// A function for toggling the started state of the quiz app in our store object
 	store.answerSubmitted = !store.answerSubmitted;
@@ -202,11 +245,14 @@ function handleAnswerSubmit() {
 		let validAnswer = validateAnswer($('input[name="answers"]:checked').val());
 		if (validAnswer) {
 			addToScore();
+		} else {
+
 		}
 		toggleAnswerSubmittedState();
 		renderCurrentView();
 	});
 }
+
 function handleNextQuestionClick() {
 	// A function to handle the next question click
 	console.log('`handleNextQuestionClick` ran');
@@ -221,6 +267,7 @@ function handleInitialLoad() {
 	// Testing stubbed out functions
 	renderCurrentView();
 	handleStartQuizClick();
+	handleAnswerSelect();
 	handleAnswerSubmit();
 	handleNextQuestionClick();
 	handleRetryQuizClick();
